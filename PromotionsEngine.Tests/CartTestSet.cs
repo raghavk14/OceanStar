@@ -149,5 +149,50 @@ namespace PromotionsEngine.Tests
             var totalPrice = cart.GetCartTotal();
             Assert.Equal(370, totalPrice);
         }
+
+        [Fact] //Scenario C
+        public void Cart_With_MulipleTypeSkus_Combo_FlatPrice_PromotionTest()
+        {
+            var cart = new PR.Cart();
+            var productA = new PR.Product(PR.SKUType.A, 50);
+            var productB = new PR.Product(PR.SKUType.B, 30);
+            var productC = new PR.Product(PR.SKUType.C, 20);
+            var productD = new PR.Product(PR.SKUType.D, 15);
+
+            //Add 3 A
+            for (int i = 0; i < 3; i++)
+            {
+                cart.AddItem(productA);
+
+            }
+            //Add  5 B
+            for (int i = 0; i < 5; i++)
+            {
+
+                cart.AddItem(productB);
+            }
+            //Add 1 C
+            cart.AddItem(productC);
+            //Add 1 D
+            cart.AddItem(productD);
+
+
+            var flatPriceRule1 = new PR.ProductPromoter(productA.SkuType, productA.Price, 3, 130, 1);
+            var flatPriceRule2 = new PR.ProductPromoter(productB.SkuType, productB.Price, 2, 45, 1);
+            var flatPriceRule3 = new PR.ProductPromoter(productC.SkuType, productC.Price, 1, 15, 1);
+            var flatPriceRule4 = new PR.ProductPromoter(productD.SkuType, productD.Price, 1, 15, 1);
+
+            var promoRuleList = new List<PR.ProductPromoter>();
+            promoRuleList.Add(flatPriceRule1);
+            promoRuleList.Add(flatPriceRule2);
+            promoRuleList.Add(flatPriceRule3);
+            promoRuleList.Add(flatPriceRule4);
+
+
+            PR.ProductPromotionStrategy promoRules = new PR.FlatPricePromotion(promoRuleList);
+            cart.PromotionStrategy = promoRules;
+            var totalPrice = cart.GetCartTotal();
+            Assert.Equal(280, totalPrice);
+        }
     }
 }

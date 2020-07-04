@@ -67,6 +67,41 @@ namespace PromotionsEngine.Tests
             Assert.Equal(" 1 A @ 50$ 2 B(s) @ 30$", promotion.ToString());
         }
 
+        //4.Define a discount on price for a promotion rule for one type of Sku
+        [Fact]
+        public void OneType_Sku_DiscountPrice_PromotionTest()
+        {
+            var cart = new PR.Cart();
+            var productA = new PR.Product(PR.SKUType.A, 50);
+            cart.AddItem(productA);
+            var discountPriceRule1 = new PR.ProductPromoter(productA.SkuType, productA.Price, 2, 50, 0.1);
+            var promoRuleList = new List<PR.ProductPromoter>();
+            promoRuleList.Add(discountPriceRule1);
+
+            PR.ProductPromotionStrategy promotion = new PR.DiscountedPricePromotion(promoRuleList);
+            Assert.Equal(" 2 A(s) @ 10% OFF on Total Price", promotion.ToString());
+        }
+
+        //5.Define a discount on price for a promotion rule for different types of Sku
+        [Fact]
+        public void MultipleType_Sku_DiscountPrice_PromotionTest()
+        {
+            var cart = new PR.Cart();
+            var productA = new PR.Product(PR.SKUType.A, 50);
+            cart.AddItem(productA);
+            var productB = new PR.Product(PR.SKUType.B, 30);
+            cart.AddItem(productA);
+
+            var discountPriceRule1 = new PR.ProductPromoter(productA.SkuType, productA.Price, 1, 50, 0.1);
+            var discountPriceRule2 = new PR.ProductPromoter(productA.SkuType, productA.Price, 2, 50, 0.2);
+            var promoRuleList = new List<PR.ProductPromoter>();
+            promoRuleList.Add(discountPriceRule1);
+            promoRuleList.Add(discountPriceRule2);
+
+            PR.ProductPromotionStrategy promotion = new PR.DiscountedPricePromotion(promoRuleList);
+            Assert.Equal(" 1 A @ 10% OFF on Total Price 2 A(s) @ 20% OFF on Total Price", promotion.ToString());
+        }
+
     }
 
 }
